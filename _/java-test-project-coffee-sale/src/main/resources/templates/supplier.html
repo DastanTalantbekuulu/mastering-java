@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Поставщики</title>
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/bootstrap-icons.min.css}" href="/css/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css">
+
+    <script th:src="@{/js/bootstrap.bundle.min.js}" src="/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/axios.min.js}" src="/js/axios.min.js"></script>
+    <script th:src="@{/js/script.js}" src="/js/script.js"></script>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">Кофейная система</a>
+        <button class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarNav"
+                aria-controls="navbarNav"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/coffee}">Кофе</a>
+                </li>
+                <li  class="nav-item">
+                    <a class="nav-link" th:href="@{/inventory/coffee}">Кофейный запас</a>
+                </li>
+                <li  sec:authorize="hasAuthority('ADMIN')" class="nav-item">
+                    <a class="nav-link" th:href="@{/inventory/merch}">Товарный запас</a>
+                </li>
+                <li sec:authorize="hasAuthority('OWNER')" class="nav-item">
+                    <a class="nav-link" th:href="@{/coffeehouse}">Магазины</a>
+                </li>
+                <li sec:authorize="hasAuthority('ADMIN')" class="nav-item">
+                    <a class="nav-link" th:href="@{/supplier}">Поставщики</a>
+                </li>
+            </ul>
+            <div sec:authorize="isAuthenticated()" class="user-dropdown ms-2">
+                <div class="dropdown">
+                    <button class="btn dropdown-toggle"
+                            type="button"
+                            id="userDropdown"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                        <img th:src="@{/images/avatar.png}"
+                             src="/images/avatar.png"
+                             alt="Avatar"
+                             class="rounded-circle me-2"
+                             style="width: 30px; height: 30px;">
+                        <span sec:authentication="name"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                        <li>
+                            <span class="dropdown-item-text">
+                                <span sec:authentication="principal.authorities"></span>
+                            </span>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <form th:action="@{/logout}" method="post" class="mb-0">
+                                <button type="submit" class="dropdown-item btn btn-primary">Выйти</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <h1 class="text-center">Поставщики</h1>
+
+    <div class="mb-3">
+        <button  sec:authorize="hasAuthority('ADMIN')" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
+            Добавить поставщика
+        </button>
+    </div>
+
+    <table class="table table-bordered table-striped table-hover">
+        <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>Название</th>
+            <th>Улица</th>
+            <th>Город</th>
+            <th>Страна</th>
+            <th>Почтовый индекс</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody id="supplierTableBody">
+        <tr th:each="supplier : ${page.content}" th:data-id="${supplier.id}">
+            <td th:text="${supplier.id}"></td>
+            <td th:text="${supplier.name}"></td>
+            <td th:text="${supplier.street}"></td>
+            <td th:text="${supplier.city}"></td>
+            <td th:text="${supplier.state}"></td>
+            <td th:text="${supplier.zip}"></td>
+            <td class="text-center">
+                <button sec:authorize="hasAuthority('ADMIN')"
+                        th:data-id="${supplier.id}"
+                        class="btn btn-warning btn-sm me-2"
+                        onclick="showEditSupplierModal(this)">
+                    Изменить
+                </button>
+                <button sec:authorize="hasAuthority('OWNER')"
+                        th:data-id="${supplier.id}"
+                        class="btn btn-danger btn-sm"
+                        onclick="deleteSupplier(this)">
+                    Удалить
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Пагинация -->
+    <nav  th:if="${page.totalPages > 1}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${page.first} ? 'disabled'">
+                <a class="page-link" th:href="@{/supplier/page(page=${page.number - 1}, size=${page.size})}">
+                    <span aria-hidden="true">«</span>
+                </a>
+            </li>
+            <li class="page-item"
+                th:each="pageNum : ${#numbers.sequence(0, page.totalPages - 1)}"
+                th:classappend="${pageNum == page.number} ? 'active'">
+                <a class="page-link"
+                   th:href="@{/supplier/page(page=${pageNum}, size=${page.size})}"
+                   th:text="${pageNum + 1}"></a>
+            </li>
+            <li class="page-item" th:classappend="${page.last} ? 'disabled'">
+                <a class="page-link" th:href="@{/supplier/page(page=${page.number + 1}, size=${page.size})}">
+                    <span aria-hidden="true">»</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Модальное окно Добавления -->
+    <div  sec:authorize="hasAuthority('ADMIN')"
+          class="modal fade"
+         id="addSupplierModal"
+         tabindex="-1"
+         aria-labelledby="addSupplierLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Добавить поставщика</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addSupplierForm">
+                        <div class="mb-3">
+                            <label class="form-label">Название</label>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Улица</label>
+                            <input type="text" class="form-control" name="street" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Город</label>
+                            <input type="text" class="form-control" name="city" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Страна</label>
+                            <input type="text" class="form-control" name="state" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Почтовый индекс</label>
+                            <input type="text" class="form-control" name="zip" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button type="button" class="btn btn-primary" onclick="addSupplier()">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно Редактирования -->
+    <div sec:authorize="hasAuthority('ADMIN')"
+         class="modal fade"
+         id="editSupplierModal"
+         tabindex="-1"
+         aria-labelledby="editSupplierModal"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Редактировать поставщика</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editSupplierForm">
+                        <div class="mb-3">
+                            <label class="form-label">Название</label>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Улица</label>
+                            <input type="text" class="form-control" name="street" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Город</label>
+                            <input type="text" class="form-control" name="city" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Страна</label>
+                            <input type="text" class="form-control" name="state" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Почтовый индекс</label>
+                            <input type="text" class="form-control" name="zip" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button type="button" class="btn btn-primary" onclick="updateSupplier()">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script  sec:authorize="hasAuthority('ADMIN')" >
+    function showEditSupplierModal(button) {
+        const supplierId = button.getAttribute("data-id");
+        const row = button.closest('tr');
+        const supplierData = {
+            id: row.cells[0].textContent,
+            name: row.cells[1].textContent,
+            street: row.cells[2].textContent,
+            city: row.cells[3].textContent,
+            state: row.cells[4].textContent,
+            zip: row.cells[5].textContent
+        };
+
+        const form = document.getElementById('editSupplierForm');
+
+        form.name.value = supplierData.name;
+        form.street.value = supplierData.street;
+        form.city.value = supplierData.city;
+        form.state.value = supplierData.state;
+        form.zip.value = supplierData.zip;
+        form.dataset.supplierId = supplierId;
+
+        const modal = new bootstrap.Modal(document.getElementById('editSupplierModal'));
+        modal.show();
+    }
+
+    async function updateSupplier() {
+        const form = document.getElementById('editSupplierForm');
+        const supplierId = form.dataset.supplierId;
+        const data = {
+            name_supplier: form.name.value,
+            street_supplier: form.street.value,
+            city_supplier: form.city.value,
+            state_supplier: form.state.value,
+            zip_supplier: form.zip.value
+        };
+
+        try {
+            const response = await axios.put(`/api/coffee/supplier/${supplierId}`, data, {
+                headers: {'Content-Type': 'application/json'}
+            });
+            if (response.status === 201) {
+                alert('Поставщик успешно обновлен!');
+                bootstrap.Modal.getInstance(document.getElementById('editSupplierModal')).hide();
+                location.reload();
+            }
+        } catch (error) {
+            alert('Ошибка при обновлении: ' + (error.response?.data?.message || error.message));
+        }
+    }
+
+    async function deleteSupplier(button) {
+        const supplierId = button.getAttribute("data-id");
+        if (confirm("Вы уверены, что хотите удалить поставщика?")) {
+            try {
+                const response = await axios.delete(`/api/coffee/supplier/${supplierId}`);
+                if (response.status === 200) {
+                    location.reload();
+                }
+            } catch (error) {
+                if (error.status >= 500) {
+                    alert("Не удалось удалить поставшика")
+                }
+                console.error(error);
+            }
+        }
+    }
+
+    async function addSupplier() {
+        const form = document.getElementById('addSupplierForm');
+        const data = {
+            name_supplier: form.name.value,
+            street_supplier: form.street.value,
+            city_supplier: form.city.value,
+            state_supplier: form.state.value,
+            zip_supplier: form.zip.value
+        };
+
+        try {
+            const response = await axios.post('/api/coffee/supplier', data, {
+                headers: {'Content-Type': 'application/json'}
+            });
+            if (response.status === 201) {
+                alert('Поставщик успешно добавлен!');
+                const supplier = response.data;
+                bootstrap.Modal.getInstance(document.getElementById('addSupplierModal')).hide();
+                form.reset();
+                location.reload();
+            }
+        } catch (error) {
+            alert('Ошибка: ' + (error.response?.data?.message || error.message));
+        }
+    }
+</script>
+
+<footer class="footer mt-auto py-3 bg-light">
+    <div class="container">
+        <span class="text-muted">Кофейная система управления © 2025</span>
+    </div>
+</footer>
+
+</body>
+</html>

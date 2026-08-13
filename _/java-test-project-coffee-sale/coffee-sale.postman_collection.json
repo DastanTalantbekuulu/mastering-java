@@ -1,0 +1,980 @@
+{
+	"info": {
+		"_postman_id": "3b5c64e8-56e1-49c3-942d-9dc43deedb2d",
+		"name": "coffee-sale",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25480225"
+	},
+	"item": [
+		{
+			"name": "coffee",
+			"item": [
+				{
+					"name": "api/coffee",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyIiwicm9sZSI6WyJVU0VSIl0sImV4cCI6MTc0MTkwNjI1NzMwMiwiaWF0IjoxNzQxODE5ODU3MzAyfQ.3oF2vgfixKpgSwOIW89y9RgKP6dcFgoaZAY7Y8KpuD8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/coffee",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"coffee"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api/coffee/1/arabice",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkYXMiLCJyb2xlIjpbIk9XTkVSIiwiQURNSU4iLCJVU0VSIl0sImV4cCI6MTc0MTkwMzQwNjQzNiwiaWF0IjoxNzQxODE3MDA2NDM2fQ.F7J0-gFBTyHKeuzJXtSDm1ndhSbfuWKxq4ZJHJzv9Co",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/coffee/4/Arabica1",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"coffee",
+								"4",
+								"Arabica1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "localhost:8888/api/coffee",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkYXMiLCJyb2xlIjpbIk9XTkVSIiwiQURNSU4iLCJVU0VSIl0sImV4cCI6MTc0MTkwNjQzNDQyOSwiaWF0IjoxNzQxODIwMDM0NDI5fQ.tsZH9mEEEk05C1RwOkcRvScec-ICmCSfSsRguTXZgWo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"coffee\": \"Arabica_6\",\r\n  \"rate\": 43.32,\r\n  \"week\": 10,\r\n  \"all\": 34,\r\n  \"supplier\": {\r\n    \"name_supplier\": \"Supplier A1\",\r\n    \"street_supplier\": \"123 Main St\",\r\n    \"city_supplier\": \"San Francisco\",\r\n    \"state_supplier\": \"CA\",\r\n    \"zip_supplier\": \"787878\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8888/api/coffee",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"api",
+								"coffee"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "localhost:8888/api/coffee/add",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkYXMiLCJyb2xlIjpbIk9XTkVSIiwiQURNSU4iLCJVU0VSIl0sImV4cCI6MTc0MTkwMzQwNjQzNiwiaWF0IjoxNzQxODE3MDA2NDM2fQ.F7J0-gFBTyHKeuzJXtSDm1ndhSbfuWKxq4ZJHJzv9Co",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"coffee\": \"Капучино\",\r\n  \"rate\": 43.32,\r\n  \"week\": 0,\r\n  \"all\": 34,\r\n  \"supplier_identifier\": 9\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8888/api/coffee/add",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"api",
+								"coffee",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "localhost:8888/api/coffee/9/Капучино/sale/3",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkYXMiLCJyb2xlIjpbIk9XTkVSIiwiQURNSU4iLCJVU0VSIl0sImV4cCI6MTc0MTkwNjQzNDQyOSwiaWF0IjoxNzQxODIwMDM0NDI5fQ.tsZH9mEEEk05C1RwOkcRvScec-ICmCSfSsRguTXZgWo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "localhost:8888/api/coffee/7/Arabica_6/sale/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"api",
+								"coffee",
+								"7",
+								"Arabica_6",
+								"sale",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "localhost:8888/api/coffee/Arabica",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkYXMiLCJyb2xlIjpbIk9XTkVSIiwiQURNSU4iLCJVU0VSIl0sImV4cCI6MTc0MTkwMzQwNjQzNiwiaWF0IjoxNzQxODE3MDA2NDM2fQ.F7J0-gFBTyHKeuzJXtSDm1ndhSbfuWKxq4ZJHJzv9Co",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"rate\": 70.8,\r\n  \"week\": 10,\r\n  \"all\": 150\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8888/api/coffee/11/Arabica_6",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"api",
+								"coffee",
+								"11",
+								"Arabica_6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "localhost:8888/api/coffee/Arabica",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkYXMiLCJyb2xlIjpbIk9XTkVSIiwiQURNSU4iLCJVU0VSIl0sImV4cCI6MTc0MTkwMzQwNjQzNiwiaWF0IjoxNzQxODE3MDA2NDM2fQ.F7J0-gFBTyHKeuzJXtSDm1ndhSbfuWKxq4ZJHJzv9Co",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8888/api/coffee/1/Arabica",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"api",
+								"coffee",
+								"1",
+								"Arabica"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "coffeehouse",
+			"item": [
+				{
+					"name": "localhost:8888/api/coffee/coffeehouse",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkYXMiLCJyb2xlIjpbIk9XTkVSIiwiQURNSU4iLCJVU0VSIl0sImV4cCI6MTc0MTkwMzQwNjQzNiwiaWF0IjoxNzQxODE3MDA2NDM2fQ.F7J0-gFBTyHKeuzJXtSDm1ndhSbfuWKxq4ZJHJzv9Co",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8888/api/coffee/coffeehouse",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"api",
+								"coffee",
+								"coffeehouse"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "localhost:8888/api/coffee/coffeehouse/1",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkYXMiLCJyb2xlIjpbIk9XTkVSIiwiQURNSU4iLCJVU0VSIl0sImV4cCI6MTc0MTkwMzQwNjQzNiwiaWF0IjoxNzQxODE3MDA2NDM2fQ.F7J0-gFBTyHKeuzJXtSDm1ndhSbfuWKxq4ZJHJzv9Co",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8888/api/coffee/coffeehouse/93917",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"api",
+								"coffee",
+								"coffeehouse",
+								"93917"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "localhost:8888/api/coffee/coffeehouse",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkYXMiLCJyb2xlIjpbIk9XTkVSIiwiQURNSU4iLCJVU0VSIl0sImV4cCI6MTc0MTkwMzQwNjQzNiwiaWF0IjoxNzQxODE3MDA2NDM2fQ.F7J0-gFBTyHKeuzJXtSDm1ndhSbfuWKxq4ZJHJzv9Co",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"identifier\": 102333,\r\n  \"city\":\"Бишкек\",\r\n  \"coffee_sold\":45,\r\n  \"merch_sold\": 2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8888/api/coffee/coffeehouse",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"api",
+								"coffee",
+								"coffeehouse"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "localhost:8888/api/coffee/coffeehouse/102333",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkYXMiLCJyb2xlIjpbIk9XTkVSIiwiQURNSU4iLCJVU0VSIl0sImV4cCI6MTc0MTkwMzQwNjQzNiwiaWF0IjoxNzQxODE3MDA2NDM2fQ.F7J0-gFBTyHKeuzJXtSDm1ndhSbfuWKxq4ZJHJzv9Co",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"identifier\": 3535,\r\n  \"city\":\"Бишкек 1\",\r\n  \"coffee_sold\":45,\r\n  \"merch_sold\": 2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8888/api/coffee/coffeehouse/93917",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"api",
+								"coffee",
+								"coffeehouse",
+								"93917"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "localhost:8888/api/coffee/coffeehouse/102333",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8888/api/coffee/coffeehouse/102333",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"api",
+								"coffee",
+								"coffeehouse",
+								"102333"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "inventory",
+			"item": [
+				{
+					"name": "coffee",
+					"item": [
+						{
+							"name": "localhost:8888/api/coffee/inventory",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkYXMiLCJyb2xlIjpbIk9XTkVSIiwiQURNSU4iLCJVU0VSIl0sImV4cCI6MTc0MTkwNDA2NDk2MSwiaWF0IjoxNzQxODE3NjY0OTYxfQ.azgqgMG6SIs3GS7J5Jxf2XJdk0Esx4fQ0OrkRQ39yqw",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8888/api/coffee/inventory",
+									"host": [
+										"localhost"
+									],
+									"port": "8888",
+									"path": [
+										"api",
+										"coffee",
+										"inventory"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "localhost:8888/api/coffee/inventory/1",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkYXMiLCJyb2xlIjpbIk9XTkVSIiwiQURNSU4iLCJVU0VSIl0sImV4cCI6MTc0MTkwNDA2NDk2MSwiaWF0IjoxNzQxODE3NjY0OTYxfQ.azgqgMG6SIs3GS7J5Jxf2XJdk0Esx4fQ0OrkRQ39yqw",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8888/api/coffee/inventory/1234/2/Arabica",
+									"host": [
+										"localhost"
+									],
+									"port": "8888",
+									"path": [
+										"api",
+										"coffee",
+										"inventory",
+										"1234",
+										"2",
+										"Arabica"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "localhost:8888/api/coffee/inventory",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkYXMiLCJyb2xlIjpbIk9XTkVSIiwiQURNSU4iLCJVU0VSIl0sImV4cCI6MTc0MTkwNDA2NDk2MSwiaWF0IjoxNzQxODE3NjY0OTYxfQ.azgqgMG6SIs3GS7J5Jxf2XJdk0Esx4fQ0OrkRQ39yqw",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"coffee_house_identifier\": 1234,\r\n  \"coffee\": \"Arabica\",\r\n  \"supplier_identifier\": 2,\r\n  \"coffee_quantity\": 100\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8888/api/coffee/inventory",
+									"host": [
+										"localhost"
+									],
+									"port": "8888",
+									"path": [
+										"api",
+										"coffee",
+										"inventory"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "localhost:8888/api/coffee/inventory",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"coffee_house_identifier\": 1234,\r\n  \"coffee\": \"Arabica\",\r\n  \"supplier_identifier\": 2,\r\n  \"coffee_quantity\": 567\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8888/api/coffee/inventory",
+									"host": [
+										"localhost"
+									],
+									"port": "8888",
+									"path": [
+										"api",
+										"coffee",
+										"inventory"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "localhost:8888/api/coffee/inventory/1234/2/Arabica",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "localhost:8888/api/coffee/inventory/1234/2/Arabica",
+									"host": [
+										"localhost"
+									],
+									"port": "8888",
+									"path": [
+										"api",
+										"coffee",
+										"inventory",
+										"1234",
+										"2",
+										"Arabica"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "merch",
+					"item": [
+						{
+							"name": "localhost:8888/api/coffee/merch/inventory",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkYXMiLCJyb2xlIjpbIk9XTkVSIiwiQURNSU4iLCJVU0VSIl0sImV4cCI6MTc0MTkwNDA2NDk2MSwiaWF0IjoxNzQxODE3NjY0OTYxfQ.azgqgMG6SIs3GS7J5Jxf2XJdk0Esx4fQ0OrkRQ39yqw",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8888/api/coffee/merch/inventory",
+									"host": [
+										"localhost"
+									],
+									"port": "8888",
+									"path": [
+										"api",
+										"coffee",
+										"merch",
+										"inventory"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "localhost:8888/api/coffee/merch/inventory/123",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkYXMiLCJyb2xlIjpbIk9XTkVSIiwiQURNSU4iLCJVU0VSIl0sImV4cCI6MTc0MTkwNDA2NDk2MSwiaWF0IjoxNzQxODE3NjY0OTYxfQ.azgqgMG6SIs3GS7J5Jxf2XJdk0Esx4fQ0OrkRQ39yqw",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8888/api/coffee/merch/inventory/93719",
+									"host": [
+										"localhost"
+									],
+									"port": "8888",
+									"path": [
+										"api",
+										"coffee",
+										"merch",
+										"inventory",
+										"93719"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "localhost:8888/api/coffee/merch/inventory",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkYXMiLCJyb2xlIjpbIk9XTkVSIiwiQURNSU4iLCJVU0VSIl0sImV4cCI6MTc0MTkwNDA2NDk2MSwiaWF0IjoxNzQxODE3NjY0OTYxfQ.azgqgMG6SIs3GS7J5Jxf2XJdk0Esx4fQ0OrkRQ39yqw",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"identifier\": 123,\r\n    \"name\": \"Кофе машина\",\r\n    \"supplier_identifier\": 2,\r\n    \"merch_quantity\": 2\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8888/api/coffee/merch/inventory",
+									"host": [
+										"localhost"
+									],
+									"port": "8888",
+									"path": [
+										"api",
+										"coffee",
+										"merch",
+										"inventory"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "localhost:8888/api/coffee/merch/inventory/123",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkYXMiLCJyb2xlIjpbIk9XTkVSIiwiQURNSU4iLCJVU0VSIl0sImV4cCI6MTc0MTkwNDA2NDk2MSwiaWF0IjoxNzQxODE3NjY0OTYxfQ.azgqgMG6SIs3GS7J5Jxf2XJdk0Esx4fQ0OrkRQ39yqw",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Кофе машина 1\",\r\n    \"merch_quantity\": 3\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8888/api/coffee/merch/inventory/93719",
+									"host": [
+										"localhost"
+									],
+									"port": "8888",
+									"path": [
+										"api",
+										"coffee",
+										"merch",
+										"inventory",
+										"93719"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "localhost:8888/api/coffee/merch/inventory/123",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwicm9sZSI6WyJVU0VSIl0sImV4cCI6MTc0MTkwNTA0NjgyNSwiaWF0IjoxNzQxODE4NjQ2ODI1fQ.hb7k6eBTV1__GxRncHsY5mjS6DlL0_Q-3-Too07rFsY",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "localhost:8888/api/coffee/merch/inventory/123",
+									"host": [
+										"localhost"
+									],
+									"port": "8888",
+									"path": [
+										"api",
+										"coffee",
+										"merch",
+										"inventory",
+										"123"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "supplier",
+			"item": [
+				{
+					"name": "localhost:8888/api/supplier",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkYXMiLCJyb2xlIjpbIk9XTkVSIiwiQURNSU4iLCJVU0VSIl0sImV4cCI6MTc0MTkwMzQwNjQzNiwiaWF0IjoxNzQxODE3MDA2NDM2fQ.F7J0-gFBTyHKeuzJXtSDm1ndhSbfuWKxq4ZJHJzv9Co",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8888/api/coffee/supplier",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"api",
+								"coffee",
+								"supplier"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "localhost:8888/api/supplier/5",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkYXMiLCJyb2xlIjpbIk9XTkVSIiwiQURNSU4iLCJVU0VSIl0sImV4cCI6MTc0MTkwMzQwNjQzNiwiaWF0IjoxNzQxODE3MDA2NDM2fQ.F7J0-gFBTyHKeuzJXtSDm1ndhSbfuWKxq4ZJHJzv9Co",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8888/api/coffee/supplier/2",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"api",
+								"coffee",
+								"supplier",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "localhost:8888/api/supplier",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkYXMiLCJyb2xlIjpbIk9XTkVSIiwiQURNSU4iLCJVU0VSIl0sImV4cCI6MTc0MTkwMzQwNjQzNiwiaWF0IjoxNzQxODE3MDA2NDM2fQ.F7J0-gFBTyHKeuzJXtSDm1ndhSbfuWKxq4ZJHJzv9Co",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name_supplier\": \"Supplier B\",\r\n  \"street_supplier\": \"4554 Main St\",\r\n  \"city_supplier\": \"Osh\",\r\n  \"state_supplier\": \"NY\",\r\n  \"zip_supplier\": \"zip4323\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8888/api/coffee/supplier",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"api",
+								"coffee",
+								"supplier"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "localhost:8888/api/supplier/5",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkYXMiLCJyb2xlIjpbIk9XTkVSIiwiQURNSU4iLCJVU0VSIl0sImV4cCI6MTc0MTkwMzQwNjQzNiwiaWF0IjoxNzQxODE3MDA2NDM2fQ.F7J0-gFBTyHKeuzJXtSDm1ndhSbfuWKxq4ZJHJzv9Co",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name_supplier\": \"Supplier BB\",\r\n  \"street_supplier\": \"Main St\",\r\n  \"city_supplier\": \"Bishkek\",\r\n  \"state_supplier\": \"NY\",\r\n  \"zip_supplier\": \"zip4323\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8888/api/coffee/supplier/12",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"api",
+								"coffee",
+								"supplier",
+								"12"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "localhost:8888/api/supplier/5",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8888/api/coffee/supplier/3",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"api",
+								"coffee",
+								"supplier",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "api/login",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\":\"das\",\r\n    \"password\":\"das\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/login",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"login"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "host",
+			"value": "http://localhost:8888",
+			"type": "default"
+		}
+	]
+}

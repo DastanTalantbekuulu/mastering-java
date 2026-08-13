@@ -1,0 +1,59 @@
+package com.mastering.sokoban.generate.model;
+
+
+import java.awt.Graphics;
+
+public abstract class Mobile implements Type {
+    protected Vertex vertex;
+
+    public abstract void draw(Graphics graphics, int x, int y);
+
+    public abstract void ring();
+
+    public boolean move(Coordinates coordinates) {
+        if (vertex != null) {
+            Vertex ver = vertex.get(coordinates.getDirection());
+            if (ver != null && ver.isWalkable()) {
+                vertex.removeMobile();
+                vertex = ver;
+                return vertex.setMobile(this);
+            }
+        }
+        return false;
+    }
+
+    public Vertex getVertex() {
+        return vertex;
+    }
+
+    public void setVertex(Vertex vertex) {
+        removeVertex();
+        this.vertex = vertex;
+        vertex.setMobile(this);
+    }
+
+    public void removeVertex() {
+        if (vertex != null) {
+            vertex.removeMobile();
+            vertex = null;
+        }
+    }
+
+    public String toString() {
+        return "Mobile [" + getClass() + "]";
+    }
+
+    public int getX() {
+        if (vertex == null) {
+            return -1;
+        }
+        return vertex.getX();
+    }
+
+    public int getY() {
+        if (vertex == null) {
+            return -1;
+        }
+        return vertex.getY();
+    }
+}

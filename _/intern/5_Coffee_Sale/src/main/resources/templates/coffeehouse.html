@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Магазины</title>
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/bootstrap-icons.min.css}" href="/css/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css">
+
+    <script th:src="@{/js/bootstrap.bundle.min.js}" src="/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/axios.min.js}" src="/js/axios.min.js"></script>
+    <script th:src="@{/js/script.js}" src="/js/script.js"></script>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">Кофейная система</a>
+        <button class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarNav"
+                aria-controls="navbarNav"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/coffee}">Кофе</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/inventory/coffee}">Кофейный запас</a>
+                </li>
+                <li sec:authorize="hasAuthority('ADMIN')" class="nav-item">
+                    <a class="nav-link" th:href="@{/inventory/merch}">Товарный запас</a>
+                </li>
+                <li sec:authorize="hasAuthority('OWNER')" class="nav-item">
+                    <a class="nav-link" th:href="@{/coffeehouse}">Магазины</a>
+                </li>
+                <li sec:authorize="hasAuthority('ADMIN')" class="nav-item">
+                    <a class="nav-link" th:href="@{/supplier}">Поставщики</a>
+                </li>
+            </ul>
+            <div sec:authorize="isAuthenticated()" class="user-dropdown ms-2">
+                <div class="dropdown">
+                    <button class="btn dropdown-toggle"
+                            type="button"
+                            id="userDropdown"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                        <img th:src="@{/images/avatar.png}"
+                             src="/images/avatar.png"
+                             alt="Avatar"
+                             class="rounded-circle me-2"
+                             style="width: 30px; height: 30px;">
+                        <span sec:authentication="name"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                        <li>
+                            <span class="dropdown-item-text">
+                                <span sec:authentication="principal.authorities"></span>
+                            </span>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <form th:action="@{/logout}" method="post" class="mb-0">
+                                <button type="submit" class="dropdown-item btn btn-primary">Выйти</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <h1 class="text-center">Магазины</h1>
+
+    <div class="mb-3">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCoffeehouseModal">
+            Добавить магазин
+        </button>
+    </div>
+
+    <table class="table table-bordered table-striped table-hover">
+        <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>Город</th>
+            <th>Кофе (количество)</th>
+            <th>Товары (количество)</th>
+            <th>Всего</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody id="coffeehouseTableBody">
+        <tr th:each="coffeehouse : ${page.content}" th:data-id="${coffeehouse.storeId}">
+            <td th:text="${coffeehouse.storeId}"></td>
+            <td th:text="${coffeehouse.city}"></td>
+            <td th:text="${coffeehouse.coffee}"></td>
+            <td th:text="${coffeehouse.merch}"></td>
+            <td th:text="${coffeehouse.total}"></td>
+            <td class="text-center">
+                <button sec:authorize="hasAuthority('OWNER')"
+                        class="btn btn-warning btn-sm me-2"
+                        onclick="showEditCoffeehouseModal(this)"
+                        th:data-id="${coffeehouse.storeId}">Изменить
+                </button>
+                <button sec:authorize="hasAuthority('OWNER')"
+                        class="btn btn-danger btn-sm"
+                        onclick="deleteCoffeehouse(this)"
+                        th:data-id="${coffeehouse.storeId}">Удалить
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Пагинация -->
+    <nav th:if="${page.totalPages > 1}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${page.first} ? 'disabled'">
+                <a class="page-link" th:href="@{/coffeehouse/page(page=${page.number - 1}, size=${page.size})}">
+                    <span aria-hidden="true">«</span>
+                </a>
+            </li>
+            <li class="page-item"
+                th:each="pageNum : ${#numbers.sequence(0, page.totalPages - 1)}"
+                th:classappend="${pageNum == page.number} ? 'active'">
+                <a class="page-link"
+                   th:href="@{/coffeehouse/page(page=${pageNum}, size=${page.size})}"
+                   th:text="${pageNum + 1}"></a>
+            </li>
+            <li class="page-item" th:classappend="${page.last} ? 'disabled'">
+                <a class="page-link" th:href="@{/coffeehouse/page(page=${page.number + 1}, size=${page.size})}">
+                    <span aria-hidden="true">»</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Модальное окно Добавления -->
+    <div sec:authorize="hasAuthority('OWNER')" class="modal fade" id="addCoffeehouseModal" tabindex="-1"
+         aria-labelledby="addCoffeehouseLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Добавить магазин</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addCoffeehouseForm">
+                        <div class="mb-3">
+                            <label class="form-label">ID</label>
+                            <input type="text"
+                                   inputmode="numeric"
+                                   pattern="\d*"
+                                   class="form-control"
+                                   name="identifier"
+                                   min="0"
+                                   required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Город</label>
+                            <input type="text" class="form-control" name="city" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Кофе (количество)</label>
+                            <input type="number" class="form-control" name="coffee_sold" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Товары (количество)</label>
+                            <input type="number" class="form-control" name="merch_sold" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Всего</label>
+                            <input type="number" class="form-control" name="all" required disabled>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button type="button" class="btn btn-primary" onclick="addCoffeehouse()">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно Редактирования -->
+    <div sec:authorize="hasAuthority('OWNER')" class="modal fade" id="editCoffeehouseModal" tabindex="-1"
+         aria-labelledby="editCoffeehouseModal"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Редактировать магазина</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editCoffeehouseForm">
+                        <div class="mb-3">
+                            <label class="form-label">ID</label>
+                            <input type="number" class="form-control" name="identifier" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Город</label>
+                            <input type="text" class="form-control" name="city" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Кофе (количество)</label>
+                            <input type="number" class="form-control" name="coffee_sold" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Товары (количество)</label>
+                            <input type="number" class="form-control" name="merch_sold" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Всего</label>
+                            <input type="number" class="form-control" name="all" required disabled>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button type="button" class="btn btn-primary" onclick="updateCoffeehouse()">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script sec:authorize="hasAuthority('OWNER')">
+    function showEditCoffeehouseModal(button) {
+        const identifier = button.getAttribute("data-id");
+        const row = button.closest('tr');
+        const coffeehouseData = {
+            identifier: row.cells[0].textContent,
+            city: row.cells[1].textContent,
+            coffee_sold: row.cells[2].textContent,
+            merch_sold: row.cells[3].textContent,
+            all: row.cells[4].textContent
+        };
+
+        const form = document.getElementById('editCoffeehouseForm');
+
+        form.identifier.value = coffeehouseData.identifier;
+        form.city.value = coffeehouseData.city;
+        form.coffee_sold.value = coffeehouseData.coffee_sold;
+        form.merch_sold.value = coffeehouseData.merch_sold;
+        form.all.value = coffeehouseData.all;
+        form.dataset.identifier = identifier;
+
+        const modal = new bootstrap.Modal(document.getElementById('editCoffeehouseModal'));
+        modal.show();
+    }
+
+    async function updateCoffeehouse() {
+        const form = document.getElementById('editCoffeehouseForm');
+        const coffeehouseId = form.dataset.identifier;
+        const data = {
+            identifier: parseInt(form.identifier.value),
+            city: form.city.value,
+            coffee_sold: parseInt(form.coffee_sold.value),
+            merch_sold: parseInt(form.merch_sold.value)
+        };
+
+        try {
+            const response = await axios.put(`/api/coffee/coffeehouse/${coffeehouseId}`, data, {
+                headers: {'Content-Type': 'application/json'}
+            });
+            if (response.status === 201) {
+                alert('Магазин успешно обновлен!');
+                bootstrap.Modal.getInstance(document.getElementById('editCoffeehouseModal')).hide();
+                location.reload();
+            }
+        } catch (error) {
+            alert('Ошибка при обновлении: ' + (error.response?.data?.message || error.message));
+        }
+    }
+
+    function deleteCoffeehouse(button) {
+        const coffeehouseId = button.getAttribute("data-id");
+        if (confirm("Вы уверены, что хотите удалить поставщика?")) {
+            axios.delete(`/api/coffee/coffeehouse/${coffeehouseId}`)
+                .then(() => location.reload())
+                .catch(error => console.error(error));
+        }
+    }
+
+    async function addCoffeehouse() {
+        const form = document.getElementById('addCoffeehouseForm');
+        const data = {
+            identifier: parseInt(form.identifier.value),
+            city: form.city.value,
+            coffee_sold: parseInt(form.coffee_sold.value),
+            merch_sold: parseInt(form.merch_sold.value)
+        };
+
+        try {
+            const response = await axios.post('/api/coffee/coffeehouse', data, {
+                headers: {'Content-Type': 'application/json'}
+            });
+            if (response.status === 201) {
+                alert('Магазин успешно добавлен!');
+                const coffeehouse = response.data;
+                bootstrap.Modal.getInstance(document.getElementById('addCoffeehouseModal')).hide();
+                form.reset();
+                location.reload();
+            }
+        } catch (error) {
+            alert('Ошибка: ' + (error.response?.data?.message || error.message));
+        }
+    }
+</script>
+
+<footer class="footer mt-auto py-3 bg-light">
+    <div class="container">
+        <span class="text-muted">Кофейная система управления © 2025</span>
+    </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Reflections>
+    <MethodsAnnotated>
+        <entry>
+            <key>com.mastering.reflections.TestModel$AM1</key>
+            <values>
+                <value>com.mastering.reflections.TestModel$C4.&lt;init&gt;(java.lang.String)</value>
+                <value>com.mastering.reflections.TestModel$C4.m3()</value>
+                <value>com.mastering.reflections.TestModel$C4.m1(int[][], java.lang.String[][])</value>
+                <value>com.mastering.reflections.TestModel$C4.m1(int, java.lang.String[])</value>
+                <value>com.mastering.reflections.TestModel$C4.m1()</value>
+            </values>
+        </entry>
+    </MethodsAnnotated>
+</Reflections>

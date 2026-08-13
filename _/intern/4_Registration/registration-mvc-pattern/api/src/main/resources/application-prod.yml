@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://195.38.164.139:5432/spring_boot_pi
+    username: erkinkoshoev
+    password: Qwerty!@#123
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+
+app:
+  image-client-path: "/home/vdsuser/Intern_Labs_6.0_Java_Backend_Spring/Spring_Boot_Pi_Pattern/images/client"
+  image-staff-path: "/home/vdsuser/Intern_Labs_6.0_Java_Backend_Spring/Spring_Boot_Pi_Pattern/images/staff"
+  image-extension: ".jpg"

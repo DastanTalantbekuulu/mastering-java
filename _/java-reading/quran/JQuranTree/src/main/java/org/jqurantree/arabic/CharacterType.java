@@ -1,0 +1,61 @@
+package org.jqurantree.arabic;
+
+public enum CharacterType {
+    Alif,
+    Ba,
+    Ta,
+    Tha,
+    Jeem,
+    HHa,
+    Kha,
+    Dal,
+    Thal,
+    Ra,
+    Zain,
+    Seen,
+    Sheen,
+    Sad,
+    DDad,
+    TTa,
+    DTha,
+    Ain,
+    Ghain,
+    Fa,
+    Qaf,
+    Kaf,
+    Lam,
+    Meem,
+    Noon,
+    Ha,
+    Waw,
+    Ya,
+    Hamza,
+    AlifMaksura,
+    TaMarbuta,
+    Tatweel,
+    SmallHighSeen,
+    SmallHighRoundedZero,
+    SmallHighUprightRectangularZero,
+    SmallHighMeemIsolatedForm,
+    SmallLowSeen,
+    SmallWaw,
+    SmallYa,
+    SmallHighNoon,
+    EmptyCentreLowStop,
+    EmptyCentreHighStop,
+    RoundedHighStopWithFilledCentre,
+    SmallLowMeem;
+
+    public static CharacterType valueOf(int ordinal) {
+        return values[ordinal];
+    }
+
+    public static final CharacterType[] values = {Alif, Ba, Ta, Tha, Jeem,
+            HHa, Kha, Dal, Thal, Ra, Zain, Seen, Sheen, Sad, DDad, TTa, DTha,
+            Ain, Ghain, Fa, Qaf, Kaf, Lam, Meem, Noon, Ha, Waw, Ya, Hamza,
+            AlifMaksura, TaMarbuta, Tatweel, SmallHighSeen,
+            SmallHighRoundedZero, SmallHighUprightRectangularZero,
+            SmallHighMeemIsolatedForm, SmallLowSeen, SmallWaw, SmallYa,
+            SmallHighNoon, EmptyCentreLowStop, EmptyCentreHighStop,
+            RoundedHighStopWithFilledCentre, SmallLowMeem};
+}

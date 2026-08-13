@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Кофе</title>
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/bootstrap-icons.min.css}" href="/css/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css">
+
+    <script th:src="@{/js/bootstrap.bundle.min.js}" src="/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/axios.min.js}" src="/js/axios.min.js"></script>
+    <script th:src="@{/js/script.js}" src="/js/script.js"></script>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">Кофейная система</a>
+        <button class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarNav"
+                aria-controls="navbarNav"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/coffee}">Кофе</a>
+                </li>
+                <li  class="nav-item">
+                    <a class="nav-link" th:href="@{/inventory/coffee}">Кофейный запас</a>
+                </li>
+                <li  sec:authorize="hasAuthority('ADMIN')" class="nav-item">
+                    <a class="nav-link" th:href="@{/inventory/merch}">Товарный запас</a>
+                </li>
+                <li sec:authorize="hasAuthority('OWNER')" class="nav-item">
+                    <a class="nav-link" th:href="@{/coffeehouse}">Магазины</a>
+                </li>
+                <li sec:authorize="hasAuthority('ADMIN')" class="nav-item">
+                    <a class="nav-link" th:href="@{/supplier}">Поставщики</a>
+                </li>
+            </ul>
+            <div sec:authorize="isAuthenticated()" class="user-dropdown ms-2">
+                <div class="dropdown">
+                    <button class="btn dropdown-toggle"
+                            type="button"
+                            id="userDropdown"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                        <img th:src="@{/images/avatar.png}"
+                             src="/images/avatar.png"
+                             alt="Avatar"
+                             class="rounded-circle me-2"
+                             style="width: 30px; height: 30px;">
+                        <span sec:authentication="name"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                        <li>
+                            <span class="dropdown-item-text">
+                                <span sec:authentication="principal.authorities"></span>
+                            </span>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <form th:action="@{/logout}" method="post" class="mb-0">
+                                <button type="submit" class="dropdown-item btn btn-primary">Выйти</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <h1 class="text-center">Кофе</h1>
+
+    <div class="mb-3">
+        <button  sec:authorize="hasAuthority('ADMIN')" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCoffeeModal">
+            Добавить кофе
+        </button>
+    </div>
+
+    <table class="table table-bordered table-striped table-hover">
+        <thead class="thead-dark">
+        <tr>
+            <th>Кофе</th>
+            <th>Цена</th>
+            <th>Продано (неделя)</th>
+            <th>Поставщик</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody id="coffeeTableBody">
+        <tr th:each="coffee : ${page.content}"
+            th:data-id="${coffee.name}"
+            th:data-supplier-id="${coffee.supplier.id}"
+            class="cursor-pointer">
+            <td th:text="${coffee.name}"></td>
+            <td th:text="${coffee.price}"></td>
+            <td th:text="${coffee.sales}" class="sales-cell"></td>
+            <td th:text="${coffee.supplier.name}"></td>
+            <td class="text-center">
+                <button sec:authorize=" hasAnyAuthority('USER')"
+                        type="button"
+                        class="btn btn-success btn-sm me-2 sell-btn"
+                        th:attr="data-coffee-name=${coffee.name}, data-supplier-id=${coffee.supplier.id}"
+                        onclick="showSellModal(this)">
+                    Продать
+                </button>
+                <button sec:authorize="hasAuthority('ADMIN')"
+                        type="button"
+                        class="btn btn-warning btn-sm me-2"
+                        th:attr="data-coffee-name=${coffee.name}, data-supplier-id=${coffee.supplier.id}"
+                        onclick="showEditModal(this)">
+                    Изменить
+                </button>
+                <button sec:authorize="hasAuthority('OWNER')"
+                        type="button"
+                        class="btn btn-danger btn-sm"
+                        th:attr="data-coffee-name=${coffee.name}, data-supplier-id=${coffee.supplier.id}"
+                        onclick="deleteCoffee(this)">
+                    Удалить
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Пагинация -->
+    <nav  th:if="${page.totalPages > 1}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${page.first} ? 'disabled'">
+                <a class="page-link" th:href="@{/coffee/page(page=${page.number - 1}, size=${page.size})}">
+                    <span aria-hidden="true">«</span>
+                </a>
+            </li>
+            <li class="page-item"
+                th:each="pageNum : ${#numbers.sequence(0, page.totalPages - 1)}"
+                th:classappend="${pageNum == page.number} ? 'active'">
+                <a class="page-link"
+                   th:href="@{/coffee/page(page=${pageNum}, size=${page.size})}"
+                   th:text="${pageNum + 1}"></a>
+            </li>
+            <li class="page-item" th:classappend="${page.last} ? 'disabled'">
+                <a class="page-link" th:href="@{/coffee/page(page=${page.number + 1}, size=${page.size})}">
+                    <span aria-hidden="true">»</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Модальное окно для добавления кофе -->
+    <div class="modal fade" id="addCoffeeModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Добавить кофе</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addCoffeeForm">
+                        <div class="mb-3">
+                            <label class="form-label">Название</label>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Цена</label>
+                            <input type="number" class="form-control" name="rate" step="0.01" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Поставщик</label>
+                            <select class="form-select" name="supplierId" id="addSupplierSelect" required>
+                                <option value="">Выберите поставщика</option>
+                            </select>
+                            <button  sec:authorize="hasAuthority('ADMIN')" type="button" class="btn btn-link mt-2" data-bs-toggle="modal"
+                                    data-bs-target="#addSupplierModal">Добавить нового поставщика
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button type="button" class="btn btn-primary" onclick="addCoffee()">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для редактирования кофе -->
+    <div sec:authorize="hasAuthority('ADMIN')" class="modal fade" id="editCoffeeModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Редактировать кофе</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editCoffeeForm">
+                        <input type="hidden" name="originalName">
+                        <input type="hidden" name="supplierId">
+                        <div class="mb-3">
+                            <label class="form-label">Название</label>
+                            <input type="text" class="form-control" name="name" readonly disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Цена</label>
+                            <input type="number" class="form-control" name="rate" step="0.01" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Продано (неделя)</label>
+                            <input type="number" class="form-control" name="week" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Всего продано</label>
+                            <input type="number" class="form-control" name="all" required disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Поставщик</label>
+                            <input type="text" class="form-control" name="supplierName" readonly disabled>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button type="button" class="btn btn-primary" onclick="updateCoffee()">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для продажи кофе -->
+    <div  sec:authorize="hasAuthority('USER')" class="modal fade" id="sellCoffeeModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Продать кофе</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="sellCoffeeForm">
+                        <input type="hidden" name="coffeeName">
+                        <input type="hidden" name="supplierId">
+                        <div class="mb-3">
+                            <label class="form-label">Название</label>
+                            <input type="text" class="form-control" name="name" readonly disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Количество</label>
+                            <input type="number" class="form-control" name="quantity" min="1" value="1" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button type="button" class="btn btn-success" onclick="confirmSellCoffee()">Продать</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для добавления нового поставщика -->
+    <div  sec:authorize="hasAuthority('ADMIN')" class="modal fade" id="addSupplierModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Добавить поставщика</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addSupplierForm">
+                        <div class="mb-3">
+                            <label class="form-label">Название</label>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Улица</label>
+                            <input type="text" class="form-control" name="street" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Город</label>
+                            <input type="text" class="form-control" name="city" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Страна</label>
+                            <input type="text" class="form-control" name="state" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Почтовый индекс</label>
+                            <input type="text" class="form-control" name="zip" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button type="button" class="btn btn-primary" onclick="addSupplier()">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    async function loadSuppliers() {
+        try {
+            const response = await axios.get('/api/coffee/supplier');
+            const suppliers = response.data;
+            const addSelect = document.getElementById('addSupplierSelect');
+
+            suppliers.forEach(supplier => {
+                const option = new Option(supplier.name_supplier, supplier.identifier);
+                addSelect.add(option);
+            });
+        } catch (error) {
+            console.error('Ошибка загрузки поставщиков:', error);
+        }
+    }
+
+    window.onload = loadSuppliers;
+
+    function showSellModal(button) {
+        const coffeeName = button.getAttribute('data-coffee-name');
+        const supplierId = button.getAttribute('data-supplier-id');
+
+        const form = document.getElementById('sellCoffeeForm');
+        form.coffeeName.value = coffeeName;
+        form.supplierId.value = supplierId;
+        form.name.value = coffeeName;
+        form.quantity.value = 1;
+
+        new bootstrap.Modal(document.getElementById('sellCoffeeModal')).show();
+    }
+
+    async function confirmSellCoffee() {
+        const form = document.getElementById('sellCoffeeForm');
+        const coffeeName = form.coffeeName.value;
+        const supplierId = form.supplierId.value;
+        const quantity = parseInt(form.quantity.value);
+
+        if (quantity < 1) {
+            alert('Количество должно быть больше 0');
+            return;
+        }
+
+        try {
+            const response = await axios.post(`/api/coffee/${supplierId}/${coffeeName}/sale/${quantity}`, null, {
+                headers: {'Content-Type': 'application/json'}
+            });
+            if (response.status === 201) {
+                const row = document.querySelector(`tr[data-id="${coffeeName}"][data-supplier-id="${supplierId}"]`);
+                const salesCell = row.querySelector('.sales-cell');
+                const currentSales = parseInt(salesCell.textContent) || 0;
+                salesCell.textContent = currentSales + quantity;
+                alert(`Продано ${quantity} кофе!`);
+                bootstrap.Modal.getInstance(document.getElementById('sellCoffeeModal')).hide();
+            }
+        } catch (error) {
+            console.error('Ошибка при продаже:', error);
+            alert('Ошибка: ' + (error.response?.data?.message || error.message));
+        }
+    }
+
+    function showEditModal(button) {
+        const coffeeName = button.getAttribute('data-coffee-name');
+        const supplierId = button.getAttribute('data-supplier-id');
+        const row = button.closest('tr');
+        const rate = row.querySelector('td:nth-child(2)').textContent;
+        const week = row.querySelector('td:nth-child(3)').textContent;
+        const supplierName = row.querySelector('td:nth-child(4)').textContent;
+
+        const form = document.getElementById('editCoffeeForm');
+        form.originalName.value = coffeeName;
+        form.supplierId.value = supplierId;
+        form.name.value = coffeeName;
+        form.rate.value = rate;
+        form.week.value = week;
+        form.all.value = '';
+        form.supplierName.value = supplierName;
+
+        new bootstrap.Modal(document.getElementById('editCoffeeModal')).show();
+    }
+
+    async function addCoffee() {
+        const form = document.getElementById('addCoffeeForm');
+        const data = {
+            coffee: form.name.value,
+            rate: parseFloat(form.rate.value),
+            week: 0,
+            all: 0,
+            supplier_identifier: parseInt(form.supplierId.value)
+        };
+        try {
+            const response = await axios.post('/api/coffee/add', data, {
+                headers: {'Content-Type': 'application/json'}
+            });
+            if (response.status === 201) {
+                alert('Кофе успешно добавлен!');
+                location.reload();
+            }
+        } catch (error) {
+            alert('Ошибка: ' + (error.response?.data?.message || error.message));
+        }
+    }
+
+    async function updateCoffee() {
+        const form = document.getElementById('editCoffeeForm');
+        const data = {
+            rate: parseFloat(form.rate.value),
+            week: parseInt(form.week.value),
+            all: form.all.value ? parseInt(form.all.value) : null
+        };
+        const originalName = form.originalName.value;
+        const supplierId = form.supplierId.value;
+
+        try {
+            const response = await axios.put(`/api/coffee/${supplierId}/${originalName}`, data, {
+                headers: {'Content-Type': 'application/json'}
+            });
+            if (response.status === 201) {
+                alert('Кофе успешно обновлен!');
+                location.reload();
+            }
+        } catch (error) {
+            alert('Ошибка: ' + (error.response?.data?.message || error.message));
+        }
+    }
+
+    async function deleteCoffee(button) {
+        const coffeeName = button.getAttribute('data-coffee-name');
+        const supplierId = button.getAttribute('data-supplier-id');
+
+        if (confirm(`Вы уверены, что хотите удалить ${coffeeName}?`)) {
+            try {
+                const response = await axios.delete(`/api/coffee/${supplierId}/${coffeeName}`);
+                if (response.status === 200) {
+                    const row = button.closest('tr');
+                    row.remove(); // Удаляем строку из таблицы
+                    alert('Кофе успешно удален!');
+                }
+            } catch (error) {
+                alert('Ошибка: ' + (error.response?.data?.message || error.message));
+            }
+        }
+    }
+
+    async function addSupplier() {
+        const form = document.getElementById('addSupplierForm');
+        const data = {
+            name_supplier: form.name.value,
+            street_supplier: form.street.value,
+            city_supplier: form.city.value,
+            state_supplier: form.state.value,
+            zip_supplier: form.zip.value
+        };
+
+        try {
+            const response = await axios.post('/api/coffee/supplier', data, {
+                headers: {'Content-Type': 'application/json'}
+            });
+            if (response.status === 201) {
+                alert('Поставщик успешно добавлен!');
+                const supplier = response.data;
+                const addSelect = document.getElementById('addSupplierSelect');
+                const option = new Option(supplier.name_supplier, supplier.identifier);
+                addSelect.add(option);
+
+                bootstrap.Modal.getInstance(document.getElementById('addSupplierModal')).hide();
+                form.reset();
+
+                const addCoffeeForm = document.getElementById('addCoffeeForm');
+                addCoffeeForm.supplierId.value = supplier.identifier;
+                new bootstrap.Modal(document.getElementById('addCoffeeModal')).show();
+            }
+        } catch (error) {
+            alert('Ошибка: ' + (error.response?.data?.message || error.message));
+        }
+    }
+</script>
+
+<footer class="footer mt-auto py-3 bg-light">
+    <div class="container">
+        <span class="text-muted">Кофейная система управления © 2025</span>
+    </div>
+</footer>
+
+</body>
+</html>

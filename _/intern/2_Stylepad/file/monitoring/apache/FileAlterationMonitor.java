@@ -1,0 +1,116 @@
+//package file.monitoring.apache;
+//
+//import java.util.ArrayList;
+//import java.util.Collection;
+//import java.util.Collections;
+//import java.util.List;
+//import java.util.Optional;
+//import java.util.concurrent.CopyOnWriteArrayList;
+//import java.util.concurrent.ThreadFactory;
+//import java.util.stream.Stream;
+//
+//public final class FileAlterationMonitor implements Runnable {
+//
+//    private static final FileAlterationObserver[] EMPTY_ARRAY = {};
+//
+//    private final long intervalMillis;
+//    private final List<FileAlterationObserver> observers = new CopyOnWriteArrayList<>();
+//    private Thread thread;
+//    private ThreadFactory threadFactory;
+//    private volatile boolean running;
+//
+//    public FileAlterationMonitor() {
+//        this(10_000);
+//    }
+//
+//    public FileAlterationMonitor(final long intervalMillis) {
+//        this.intervalMillis = intervalMillis;
+//    }
+//
+//    public FileAlterationMonitor(final long interval, final Collection<FileAlterationObserver> observers) {
+//        this(interval,
+//            Optional
+//                .ofNullable(observers)
+//                .orElse(Collections.emptyList())
+//                .toArray(EMPTY_ARRAY)
+//        );
+//    }
+//
+//    public FileAlterationMonitor(final long interval, final FileAlterationObserver... observers) {
+//        this(interval);
+//        if (observers != null) {
+//            Stream.of(observers).forEach(this::addObserver);
+//        }
+//    }
+//    public void addObserver(final FileAlterationObserver observer) {
+//        if (observer != null) {
+//            observers.add(observer);
+//        }
+//    }
+//
+//    public long getInterval() {
+//        return intervalMillis;
+//    }
+//
+//    public Iterable<FileAlterationObserver> getObservers() {
+//        return new ArrayList<>(observers);
+//    }
+//    public void removeObserver(final FileAlterationObserver observer) {
+//        if (observer != null) {
+//            observers.removeIf(observer::equals);
+//        }
+//    }
+//    public void run() {
+//        while (running) {
+//            observers.forEach(FileAlterationObserver::checkAndNotify);
+//            if (!running) {
+//                break;
+//            }
+//            try {
+//                Thread.sleep(intervalMillis);
+//            } catch (final InterruptedException ignored) {
+//                // ignore
+//            }
+//        }
+//    }
+//
+//    public synchronized void setThreadFactory(final ThreadFactory threadFactory) {
+//        this.threadFactory = threadFactory;
+//    }
+//
+//    public synchronized void start() throws Exception {
+//        if (running) {
+//            throw new IllegalStateException("Monitor is already running");
+//        }
+//        for (final FileAlterationObserver observer : observers) {
+//            observer.initialize();
+//        }
+//        running = true;
+//        if (threadFactory != null) {
+//            thread = threadFactory.newThread(this);
+//        } else {
+//            thread = new Thread(this);
+//        }
+//        thread.start();
+//    }
+//
+//    public synchronized void stop() throws Exception {
+//        stop(intervalMillis);
+//    }
+//
+//    public synchronized void stop(final long stopInterval) throws Exception {
+//        if (!running) {
+//            throw new IllegalStateException("Monitor is not running");
+//        }
+//        running = false;
+//        try {
+//            thread.interrupt();
+//            thread.join(stopInterval);
+//        } catch (final InterruptedException e) {
+//            Thread.currentThread().interrupt();
+//        }
+//        for (final FileAlterationObserver observer : observers) {
+//            observer.destroy();
+//        }
+//    }
+//}

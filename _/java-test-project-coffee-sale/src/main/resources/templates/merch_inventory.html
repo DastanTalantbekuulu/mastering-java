@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Товарный запас</title>
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/bootstrap-icons.min.css}" href="/css/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css">
+
+    <script th:src="@{/js/bootstrap.bundle.min.js}" src="/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/axios.min.js}" src="/js/axios.min.js"></script>
+    <script th:src="@{/js/script.js}" src="/js/script.js"></script>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">Кофейная система</a>
+        <button class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarNav"
+                aria-controls="navbarNav"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/coffee}">Кофе</a>
+                </li>
+                <li  class="nav-item">
+                    <a class="nav-link" th:href="@{/inventory/coffee}">Кофейный запас</a>
+                </li>
+                <li  sec:authorize="hasAuthority('ADMIN')" class="nav-item">
+                    <a class="nav-link" th:href="@{/inventory/merch}">Товарный запас</a>
+                </li>
+                <li sec:authorize="hasAuthority('OWNER')" class="nav-item">
+                    <a class="nav-link" th:href="@{/coffeehouse}">Магазины</a>
+                </li>
+                <li sec:authorize="hasAuthority('ADMIN')" class="nav-item">
+                    <a class="nav-link" th:href="@{/supplier}">Поставщики</a>
+                </li>
+            </ul>
+            <div sec:authorize="isAuthenticated()" class="user-dropdown ms-2">
+                <div class="dropdown">
+                    <button class="btn dropdown-toggle"
+                            type="button"
+                            id="userDropdown"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                        <img th:src="@{/images/avatar.png}"
+                             src="/images/avatar.png"
+                             alt="Avatar"
+                             class="rounded-circle me-2"
+                             style="width: 30px; height: 30px;">
+                        <span sec:authentication="name"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                        <li>
+                            <span class="dropdown-item-text">
+                                <span sec:authentication="principal.authorities"></span>
+                            </span>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <form th:action="@{/logout}" method="post" class="mb-0">
+                                <button type="submit" class="dropdown-item btn btn-primary">Выйти</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <h1 class="text-center">Товарный запас</h1>
+
+    <div class="mb-3">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMerchInventoryModal">
+            Инвентаризация
+        </button>
+    </div>
+
+    <table class="table table-bordered table-striped table-hover">
+        <thead class="thead-dark">
+        <tr>
+            <th>Номер товара</th>
+            <th>Название</th>
+            <th>Поставщик</th>
+            <th>Количество</th>
+            <th>Дата обновление</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody id="merchInventoryTableBody">
+        <tr th:each="inventory : ${page.content}"
+            th:data-id="${inventory.id}"
+            th:data-supplier-id="${inventory.supplierId}"
+            class="cursor-pointer">
+            <td th:text="${inventory.id}"></td>
+            <td th:text="${inventory.name}"></td>
+            <td th:text="${inventory.supplierId}"></td>
+            <td th:text="${inventory.quantity}"></td>
+            <td th:text="${inventory.updatedAt}"></td>
+            <td class="text-center">
+                <button  sec:authorize="hasAuthority('ADMIN')"
+                         type="button"
+                        class="btn btn-warning btn-sm me-2"
+                        th:attr="data-id=${inventory.id}, data-supplier-id=${inventory.supplierId}"
+                        onclick="showEditMerchInventoryModal(this)">Изменить</button>
+                <button  sec:authorize="hasAuthority('OWNER')"
+                         type="button"
+                         class="btn btn-danger btn-sm"
+                        th:attr="data-id=${inventory.id}"
+                        onclick="deleteMerchInventory(this)">Удалить</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Пагинация для Merch Inventory -->
+    <nav  th:if="${page.totalPages > 1}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${page.first} ? 'disabled'">
+                <a class="page-link" th:href="@{/inventory/merch/page(page=${page.number - 1}, size=${page.size})}">
+                    <span aria-hidden="true">«</span>
+                </a>
+            </li>
+            <li class="page-item"
+                th:each="pageNum : ${#numbers.sequence(0, page.totalPages - 1)}"
+                th:classappend="${pageNum == page.number} ? 'active'">
+                <a class="page-link"
+                   th:href="@{/inventory/merch/page(page=${pageNum}, size=${page.size})}"
+                   th:text="${pageNum + 1}"></a>
+            </li>
+            <li class="page-item" th:classappend="${page.last} ? 'disabled'">
+                <a class="page-link" th:href="@{/inventory/merch/page(page=${page.number + 1}, size=${page.size})}">
+                    <span aria-hidden="true">»</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Модальное окно для добавления Merch Inventory -->
+    <div  sec:authorize="hasAuthority('ADMIN')" class="modal fade" id="addMerchInventoryModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Добавить товар</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addMerchInventoryForm">
+                        <div class="mb-3">
+                            <label class="form-label">Номер товара</label>
+                            <input type="number" class="form-control" name="id" min="1" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Название</label>
+                            <input type="text" class="form-control" name="name" maxlength="255" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Поставщик</label>
+                            <select class="form-select" name="supplierId" id="addMerchSupplierSelect" required>
+                                <option value="">Выберите поставщика</option>
+                            </select>
+                            <button type="button" class="btn btn-link mt-2" data-bs-toggle="modal"
+                                    data-bs-target="#addSupplierModal">Добавить нового поставщика</button>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Количество</label>
+                            <input type="number" class="form-control" name="quantity" min="0" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button type="button" class="btn btn-primary" onclick="addMerchInventory()">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для редактирования Merch Inventory -->
+    <div  sec:authorize="hasAuthority('ADMIN')" class="modal fade" id="editMerchInventoryModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Редактировать товар</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editMerchInventoryForm">
+                        <input type="hidden" name="id">
+                        <div class="mb-3">
+                            <label class="form-label">Номер товара</label>
+                            <input type="number" class="form-control" name="idDisplay" readonly disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Название</label>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Поставщик</label>
+                            <input type="text" class="form-control" name="supplierName" readonly disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Количество</label>
+                            <input type="number" class="form-control" name="quantity" min="0" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button type="button" class="btn btn-primary" onclick="updateMerchInventory()">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для добавления нового поставщика -->
+    <div  sec:authorize="hasAuthority('ADMIN')" class="modal fade" id="addSupplierModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Добавить поставщика</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addSupplierForm">
+                        <div class="mb-3">
+                            <label class="form-label">Название</label>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Улица</label>
+                            <input type="text" class="form-control" name="street" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Город</label>
+                            <input type="text" class="form-control" name="city" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Страна</label>
+                            <input type="text" class="form-control" name="state" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Почтовый индекс</label>
+                            <input type="text" class="form-control" name="zip" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button type="button" class="btn btn-primary" onclick="addSupplier()">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script  sec:authorize="hasAuthority('ADMIN')" >
+    async function loadSuppliers() {
+        try {
+            const response = await axios.get('/api/coffee/supplier');
+            const suppliers = response.data;
+            const merchSelect = document.getElementById('addMerchSupplierSelect');
+
+            suppliers.forEach(supplier => {
+                const option = new Option(supplier.name_supplier, supplier.identifier);
+                merchSelect.add(option);
+            });
+        } catch (error) {
+            console.error('Ошибка загрузки поставщиков:', error);
+        }
+    }
+
+    window.onload = loadSuppliers;
+
+    async function addMerchInventory() {
+        const form = document.getElementById('addMerchInventoryForm');
+        const data = {
+            identifier: parseInt(form.id.value),
+            name: form.name.value,
+            supplier_identifier: parseInt(form.supplierId.value),
+            merch_quantity: parseInt(form.quantity.value)
+        };
+
+        try {
+            const response = await axios.post('/api/coffee/merch/inventory', data, {
+                headers: {'Content-Type': 'application/json'}
+            });
+            if (response.status === 201) {
+                alert('Товар добавлен на склад!');
+                bootstrap.Modal.getInstance(document.getElementById('addMerchInventoryModal')).hide();
+                form.reset();
+                location.reload();
+            }
+        } catch (error) {
+            alert('Ошибка: ' + (error.response?.data?.message || error.message));
+        }
+    }
+
+    function showEditMerchInventoryModal(button) {
+        const id = button.getAttribute('data-id');
+        const row = button.closest('tr');
+        const name = row.querySelector('td:nth-child(2)').textContent;
+        const supplierId = button.getAttribute('data-supplier-id');
+        const quantity = row.querySelector('td:nth-child(4)').textContent;
+        const supplierName = row.querySelector('td:nth-child(3)').textContent;
+
+        const form = document.getElementById('editMerchInventoryForm');
+        form.id.value = id;
+        form.idDisplay.value = id;
+        form.name.value = name;
+        form.supplierName.value = supplierName;
+        form.quantity.value = quantity;
+
+        new bootstrap.Modal(document.getElementById('editMerchInventoryModal')).show();
+    }
+
+    async function updateMerchInventory() {
+        const form = document.getElementById('editMerchInventoryForm');
+        const data = {
+            name: form.name.value,
+            merch_quantity: parseInt(form.quantity.value)
+        };
+        const id = form.id.value;
+
+        try {
+            const response = await axios.put(`/api/coffee/merch/inventory/${id}`, data, {
+                headers: {'Content-Type': 'application/json'}
+            });
+            if (response.status === 201) {
+                alert('Инвентарь мерча обновлен!');
+                bootstrap.Modal.getInstance(document.getElementById('editMerchInventoryModal')).hide();
+                location.reload();
+            }
+        } catch (error) {
+            alert('Ошибка: ' + (error.response?.data?.message || error.message));
+        }
+    }
+
+    async function deleteMerchInventory(button) {
+        const id = button.getAttribute('data-id');
+
+        if (confirm(`Вы уверены, что хотите удалить товар с ID ${id}?`)) {
+            try {
+                const response = await axios.delete(`/api/coffee/merch/inventory/${id}`);
+                if (response.status === 200) {
+                    alert('Товар удален со склада!');
+                    location.reload();
+                }
+            } catch (error) {
+                alert('Ошибка: ' + (error.response?.data?.message || error.message));
+            }
+        }
+    }
+
+    async function addSupplier() {
+        const form = document.getElementById('addSupplierForm');
+        const data = {
+            name_supplier: form.name.value,
+            street_supplier: form.street.value,
+            city_supplier: form.city.value,
+            state_supplier: form.state.value,
+            zip_supplier: form.zip.value
+        };
+
+        try {
+            const response = await axios.post('/api/coffee/supplier', data, {
+                headers: {'Content-Type': 'application/json'}
+            });
+            if (response.status === 201) {
+                alert('Поставщик успешно добавлен!');
+                const supplier = response.data;
+                const merchSelect = document.getElementById('addMerchSupplierSelect');
+                const option = new Option(supplier.name_supplier, supplier.identifier);
+                merchSelect.add(option);
+
+                bootstrap.Modal.getInstance(document.getElementById('addSupplierModal')).hide();
+                form.reset();
+
+                const merchModal = new bootstrap.Modal(document.getElementById('addMerchInventoryModal'));
+                document.getElementById('addMerchInventoryForm').supplierId.value = supplier.identifier;
+                merchModal.show();
+            }
+        } catch (error) {
+            alert('Ошибка: ' + (error.response?.data?.message || error.message));
+        }
+    }
+</script>
+
+<footer class="footer mt-auto py-3 bg-light">
+    <div class="container">
+        <span class="text-muted">Кофейная система управления © 2025</span>
+    </div>
+</footer>
+
+</body>
+</html>

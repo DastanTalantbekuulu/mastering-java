@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Reflections>
+    <FieldsAnnotated>
+        <entry>
+            <key>com.mastering.reflections.TestModel$AF1</key>
+            <values>
+                <value>com.mastering.reflections.TestModel$C4.f1</value>
+                <value>com.mastering.reflections.TestModel$C4.f2</value>
+            </values>
+        </entry>
+    </FieldsAnnotated>
+</Reflections>

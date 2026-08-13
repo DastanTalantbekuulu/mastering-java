@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Кофейный запас</title>
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/bootstrap-icons.min.css}" href="/css/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css">
+
+    <script th:src="@{/js/bootstrap.bundle.min.js}" src="/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/axios.min.js}" src="/js/axios.min.js"></script>
+    <script th:src="@{/js/script.js}" src="/js/script.js"></script>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">Кофейная система</a>
+        <button class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarNav"
+                aria-controls="navbarNav"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/coffee}">Кофе</a>
+                </li>
+                <li  class="nav-item">
+                    <a class="nav-link" th:href="@{/inventory/coffee}">Кофейный запас</a>
+                </li>
+                <li  sec:authorize="hasAuthority('ADMIN')" class="nav-item">
+                    <a class="nav-link" th:href="@{/inventory/merch}">Товарный запас</a>
+                </li>
+                <li sec:authorize="hasAuthority('OWNER')" class="nav-item">
+                    <a class="nav-link" th:href="@{/coffeehouse}">Магазины</a>
+                </li>
+                <li sec:authorize="hasAuthority('ADMIN')" class="nav-item">
+                    <a class="nav-link" th:href="@{/supplier}">Поставщики</a>
+                </li>
+            </ul>
+            <div sec:authorize="isAuthenticated()" class="user-dropdown ms-2">
+                <div class="dropdown">
+                    <button class="btn dropdown-toggle"
+                            type="button"
+                            id="userDropdown"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                        <img th:src="@{/images/avatar.png}"
+                             src="/images/avatar.png"
+                             alt="Avatar"
+                             class="rounded-circle me-2"
+                             style="width: 30px; height: 30px;">
+                        <span sec:authentication="name"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                        <li>
+                            <span class="dropdown-item-text">
+                                <span sec:authentication="principal.authorities"></span>
+                            </span>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <form th:action="@{/logout}" method="post" class="mb-0">
+                                <button type="submit" class="dropdown-item btn btn-primary">Выйти</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <h1 class="text-center">Кофейный запас</h1>
+
+    <div class="mb-3">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCoffeeInventoryModal">
+            Инвентаризация
+        </button>
+    </div>
+
+    <table class="table table-bordered table-striped table-hover">
+        <thead class="thead-dark">
+        <tr>
+            <th>ID склада</th>
+            <th>Кофе</th>
+            <th>Поставщик</th>
+            <th>Количество</th>
+            <th>Последнее обновление</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody id="coffeeInventoryTableBody">
+        <tr th:each="inventory : ${page.content}"
+            th:data-warehouse-id="${inventory.warehouseId}"
+            th:data-coffee="${inventory.coffee}"
+            th:data-supplier-id="${inventory.supplierId}"
+            class="cursor-pointer">
+            <td th:text="${inventory.warehouseId}"></td>
+            <td th:text="${inventory.coffee}"></td>
+            <td th:text="${inventory.supplierId}"></td>
+            <td th:text="${inventory.quantity}"></td>
+            <td th:text="${inventory.updatedAt}"></td>
+            <td class="text-center">
+                <button  sec:authorize="hasAuthority('ADMIN')" type="button" class="btn btn-warning btn-sm me-2"
+                        th:attr="data-warehouse-id=${inventory.warehouseId}, data-coffee=${inventory.coffee}, data-supplier-id=${inventory.supplierId}"
+                        onclick="showEditCoffeeInventoryModal(this)">Изменить
+                </button>
+                <button  sec:authorize="hasAuthority('OWNER')" type="button" class="btn btn-danger btn-sm"
+                        th:attr="data-warehouse-id=${inventory.warehouseId}, data-coffee=${inventory.coffee}, data-supplier-id=${inventory.supplierId}"
+                        onclick="deleteCoffeeInventory(this)">Удалить
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Пагинация для Coffee Inventory -->
+    <nav  th:if="${page.totalPages > 1}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${page.first} ? 'disabled'">
+                <a class="page-link" th:href="@{/inventory/coffee/page(page=${page.number - 1}, size=${page.size})}">
+                    <span aria-hidden="true">«</span>
+                </a>
+            </li>
+            <li class="page-item"
+                th:each="pageNum : ${#numbers.sequence(0, page.totalPages - 1)}"
+                th:classappend="${pageNum == page.number} ? 'active'">
+                <a class="page-link"
+                   th:href="@{/inventory/coffee/page(page=${pageNum}, size=${page.size})}"
+                   th:text="${pageNum + 1}"></a>
+            </li>
+            <li class="page-item" th:classappend="${page.last} ? 'disabled'">
+                <a class="page-link" th:href="@{/inventory/coffee/page(page=${page.number + 1}, size=${page.size})}">
+                    <span aria-hidden="true">»</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Модальное окно для добавления Coffee Inventory -->
+    <div class="modal fade" id="addCoffeeInventoryModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Инвентаризация</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addCoffeeInventoryForm">
+                        <div class="mb-3">
+                            <label class="form-label">ID склада</label>
+                            <select class="form-select" name="warehouseId" id="warehouseSelect" required>
+                                <option value="">Выберите склад</option>
+                                <option  sec:authorize="hasAuthority('ADMIN')" value="new">Добавить новый склад</option>
+                            </select>
+                            <div  sec:authorize="hasAuthority('ADMIN')" class="mt-2" id="newWarehouseContainer" style="display: none;">
+                                <input type="number" class="form-control" id="newWarehouseId" name="newWarehouseId"
+                                       min="1" placeholder="Введите новый ID склада">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Кофе</label>
+                            <select class="form-select" name="coffee" id="coffeeSelect" required>
+                                <option value="">Выберите кофе</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Поставщик</label>
+                            <input type="text" class="form-control" name="supplierId" id="supplierId" readonly disabled>
+                            <input type="hidden" name="supplierIdHidden" id="supplierIdHidden">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Количество</label>
+                            <input type="number" class="form-control" name="quantity" min="0" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button type="button" class="btn btn-primary" onclick="addCoffeeInventory()">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для редактирования Coffee Inventory -->
+    <div class="modal fade" id="editCoffeeInventoryModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Редактировать кофе на складе</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editCoffeeInventoryForm">
+                        <input type="hidden" name="warehouseId">
+                        <input type="hidden" name="coffee">
+                        <input type="hidden" name="supplierId">
+                        <div class="mb-3">
+                            <label class="form-label">ID склада</label>
+                            <input type="number" class="form-control" name="warehouseIdDisplay" readonly disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Кофе</label>
+                            <input type="text" class="form-control" name="coffeeDisplay" readonly disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Поставщик</label>
+                            <input type="text" class="form-control" name="supplierName" readonly disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Количество</label>
+                            <input type="number" class="form-control" name="quantity" min="0" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button type="button" class="btn btn-primary" onclick="updateCoffeeInventory()">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const warehouseSelect = document.getElementById("warehouseSelect");
+        const newWarehouseContainer = document.getElementById("newWarehouseContainer");
+        const newWarehouseInput = document.getElementById("newWarehouseId");
+
+        warehouseSelect.addEventListener("change", function () {
+            if (warehouseSelect.value === "new") {
+                newWarehouseContainer.style.display = "block";
+                newWarehouseInput.required = true;
+            } else {
+                newWarehouseContainer.style.display = "none";
+                newWarehouseInput.value = "";
+                newWarehouseInput.required = false;
+            }
+        });
+
+        loadWarehouses();
+    });
+
+    async function loadWarehouses() {
+        try {
+            const response = await axios.get('/api/coffee/inventory/list');
+            const warehouses = response.data;
+            const warehouseSelect = document.getElementById('warehouseSelect');
+
+            warehouses.forEach(warehouse => {
+                const option = new Option(warehouse, warehouse);
+                warehouseSelect.add(option);
+            });
+        } catch (error) {
+            console.error('Ошибка загрузки складов:', error);
+        }
+    }
+
+    async function loadSuppliers() {
+        try {
+            const response = await axios.get('/api/coffee/supplier');
+            const suppliers = response.data;
+            window.suppliers = suppliers.reduce((map, supplier) => {
+                map[supplier.identifier] = supplier.name_supplier;
+                return map;
+            }, {});
+
+            updateSupplierNames();
+        } catch (error) {
+            console.error('Ошибка загрузки поставщиков:', error);
+        }
+    }
+
+    function updateSupplierNames() {
+        document.querySelectorAll("#coffeeInventoryTableBody tr").forEach(row => {
+            const supplierIdCell = row.querySelector("td:nth-child(3)");
+            const supplierId = supplierIdCell.textContent.trim();
+            if (window.suppliers[supplierId]) {
+                supplierIdCell.textContent = window.suppliers[supplierId];
+            }
+        });
+    }
+
+    window.onload = async function () {
+        await loadSuppliers();
+        await loadCoffee();
+    };
+
+    async function loadCoffee() {
+        try {
+            const response = await axios.get('/api/coffee');
+            const coffees = response.data;
+            const coffeeSelect = document.getElementById('coffeeSelect');
+
+            coffees.forEach(coffee => {
+                const optionText = `${coffee.coffee} (${coffee.supplier.name_supplier})`;
+                const option = new Option(optionText, coffee.coffee);
+                option.dataset.supplierName = coffee.supplier.name_supplier;
+                option.dataset.supplierId = coffee.supplier.identifier;
+                coffeeSelect.add(option);
+            });
+
+            coffeeSelect.addEventListener('change', function () {
+                const selectedOption = coffeeSelect.options[coffeeSelect.selectedIndex];
+                const supplierName = selectedOption.dataset.supplierName;
+                const supplierId = selectedOption.dataset.supplierId;
+                const supplierInput = document.getElementById('supplierId');
+                const supplierHiddenInput = document.getElementById('supplierIdHidden');
+
+                supplierInput.value = supplierName || '';
+                supplierHiddenInput.value = supplierId || '';
+            });
+
+        } catch (error) {
+            console.error('Ошибка загрузки кофе:', error);
+        }
+    }
+
+    async function addCoffeeInventory() {
+        const form = document.getElementById('addCoffeeInventoryForm');
+        let warehouseId = form.warehouseId.value || form.newWarehouseId.value;
+        if (warehouseId === "new") {
+            warehouseId = form.newWarehouseId.value
+        }
+        const data = {
+            coffee_house_identifier: parseInt(warehouseId),
+            coffee: form.coffee.value,
+            supplier_identifier: parseInt(form.supplierIdHidden.value),
+            coffee_quantity: parseInt(form.quantity.value)
+        };
+
+        if (!warehouseId) {
+            alert('Пожалуйста, выберите существующий склад или введите новый ID склада');
+            return;
+        }
+
+        try {
+            const response = await axios.post('/api/coffee/inventory', data, {
+                headers: {'Content-Type': 'application/json'}
+            });
+            if (response.status === 201) {
+                alert('Кофе добавлен на склад!');
+                bootstrap.Modal.getInstance(document.getElementById('addCoffeeInventoryModal')).hide();
+                form.reset();
+                location.reload();
+            }
+        } catch (error) {
+            alert('Ошибка: ' + (error.response?.data?.message || error.message));
+        }
+    }
+
+    function showEditCoffeeInventoryModal(button) {
+        const warehouseId = button.getAttribute('data-warehouse-id');
+        const coffee = button.getAttribute('data-coffee');
+        const supplierId = button.getAttribute('data-supplier-id');
+        const row = button.closest('tr');
+        const quantity = row.querySelector('td:nth-child(4)').textContent;
+        const supplierName = row.querySelector('td:nth-child(3)').textContent;
+
+        const form = document.getElementById('editCoffeeInventoryForm');
+        form.warehouseId.value = warehouseId;
+        form.coffee.value = coffee;
+        form.supplierId.value = supplierId;
+        form.warehouseIdDisplay.value = warehouseId;
+        form.coffeeDisplay.value = coffee;
+        form.supplierName.value = supplierName;
+        form.quantity.value = quantity;
+
+        new bootstrap.Modal(document.getElementById('editCoffeeInventoryModal')).show();
+    }
+
+    async function updateCoffeeInventory() {
+        const form = document.getElementById('editCoffeeInventoryForm');
+        const data = {
+            coffee_house_identifier: parseInt(form.warehouseId.value),
+            coffee: form.coffee.value,
+            supplier_identifier: parseInt(form.supplierId.value),
+            coffee_quantity: parseInt(form.quantity.value)
+        };
+
+        try {
+            const response = await axios.put('/api/coffee/inventory', data, {
+                headers: {'Content-Type': 'application/json'}
+            });
+            if (response.status === 201) {
+                alert('Инвентарь кофе обновлен!');
+                bootstrap.Modal.getInstance(document.getElementById('editCoffeeInventoryModal')).hide();
+                location.reload();
+            }
+        } catch (error) {
+            alert('Ошибка: ' + (error.response?.data?.message || error.message));
+        }
+    }
+
+    async function deleteCoffeeInventory(button) {
+        const warehouseId = button.getAttribute('data-warehouse-id');
+        const coffee = button.getAttribute('data-coffee');
+        const supplierId = button.getAttribute('data-supplier-id');
+
+        if (confirm(`Вы уверены, что хотите удалить ${coffee} со склада ${warehouseId}?`)) {
+            try {
+                const response = await axios.delete(`/api/coffee/inventory/${warehouseId}/${supplierId}/${coffee}`);
+                if (response.status === 200) {
+                    alert('Кофе удален со склада!');
+                    location.reload();
+                }
+            } catch (error) {
+                alert('Ошибка: ' + (error.response?.data?.message || error.message));
+            }
+        }
+    }
+</script>
+
+<footer class="footer mt-auto py-3 bg-light">
+    <div class="container">
+        <span class="text-muted">Кофейная система управления © 2025</span>
+    </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,36 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/spring_boot_pi
+    username: postgres
+    password: postgres
+#    url: jdbc:postgresql://195.38.164.139:5432/spring_boot_pi
+#    username: erkinkoshoev
+#    password: Qwerty!@#123
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+app:
+  image-client-path: C:\Users\dastan\home\intern\4_Registration
+  image-staff-path: C:\Users\dastan\home\intern\4_Registration
+  image-extension: ".jpg"
+
+#logging:
+#  level:
+#    org:
+#      springframework:
+#        aop: DEBUG
+
+#logging:
+#  level:
+#    org:
+#      springframework:
+#        jdbc:
+#          core: TRACE
+
+#gitlab:
+#  vue:
+#    access-token: glpat-TcHgvNeSnZaHzYsEnoro

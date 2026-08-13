@@ -1,0 +1,30 @@
+package com.mastering.shuntingyard.model;
+
+/**
+ * Represents an operator in a mathematical expression.
+ */
+public abstract class Operator {
+    private final String symbol;
+
+    /**
+     * Operator class constructor.
+     * @param symbol        The symbol of the operator being defined.
+     */
+    protected Operator(String symbol) {
+        this.symbol = symbol;
+    }
+
+    /**
+     * Gets the symbol of the operator defined by this instance.
+     * @return              The symbol of the operator defined by this instance.
+     */
+    public String getSymbol() {
+        return symbol;
+    }
+
+    /**
+     * Gets the token that represents this operator.
+     * @return              The token that represents this operator.
+     */
+    public abstract OperatorToken getToken();
+}

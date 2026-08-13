@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.mastering</groupId>
+    <artifactId>java</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>algorithms</module>
+        <module>challenges</module>
+        <module>design-patterns</module>
+        <module>language-features</module>
+        <module>projects</module>
+        <module>spring-lab</module>
+        <module>sandbox</module>
+        <module>utils</module>
+    </modules>
+
+    <properties>
+        <latest.java.version>25</latest.java.version>
+        <maven.compiler.release>${latest.java.version}</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <latest.spring-boot.version>4.0.0</latest.spring-boot.version> <!-- Nov 20, 2025 -->
+        <latest.lombok.version>1.18.42</latest.lombok.version> <!-- Sep 18, 2025 -->
+        <latest.jackson.version>3.0.3</latest.jackson.version> <!-- Nov 28, 2025 -->
+        <latest.junit.version>6.0.1</latest.junit.version> <!-- Oct 31, 2025 -->
+        <latest.assertj.version>3.27.6</latest.assertj.version> <!-- Sep 22, 2025 -->
+        <datafaker.version>2.5.3</datafaker.version> <!-- Oct 26, 2025 -->
+
+        <depclean-maven-plugin.version>2.1.0</depclean-maven-plugin.version> <!-- Jun 06, 2025 -->
+        <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version> <!-- Sep 22, 2025 -->
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${latest.spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${latest.lombok.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>tools.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${latest.jackson.version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>${latest.junit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${latest.assertj.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.datafaker</groupId>
+                <artifactId>datafaker</artifactId>
+                <version>${datafaker.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                    <configuration>
+                        <release>${maven.compiler.release}</release>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>se.kth.castor</groupId>
+                <artifactId>depclean-maven-plugin</artifactId>
+                <version>${depclean-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>depclean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

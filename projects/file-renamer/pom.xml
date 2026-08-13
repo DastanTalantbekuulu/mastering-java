@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.mastering</groupId>
+        <artifactId>projects</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>file-renamer</artifactId>
+    <name>File Renamer</name>
+    <description>A simple tool to rename files</description>
+
+    <properties>
+        <pdfbox.version>3.0.5</pdfbox.version> <!-- May 01, 2025 -->
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.5.18</version><!-- Mar 18, 2025 -->
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.sourceforge.tess4j</groupId>
+            <artifactId>tess4j</artifactId>
+            <version>5.16.0</version><!-- Jun 08, 2025 -->
+        </dependency>
+        <dependency>
+            <groupId>org.apache.opennlp</groupId>
+            <artifactId>opennlp-tools</artifactId>
+            <version>2.5.4</version><!-- Apr 16, 2025 -->
+        </dependency>
+
+        <!-- pdf -->
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>${pdfbox.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox-tools</artifactId>
+            <version>${pdfbox.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox-app</artifactId>
+            <version>${pdfbox.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox-examples</artifactId>
+            <version>${pdfbox.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>jbig2-imageio</artifactId>
+            <version>3.0.4</version><!-- Mar 01, 2022 -->
+        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>com.github.librepdf</groupId>-->
+        <!--            <artifactId>openpdf</artifactId>-->
+        <!--            <version>2.2.3</version>&lt;!&ndash; Jun 18, 2025 &ndash;&gt;-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.itextpdf</groupId>-->
+        <!--            <artifactId>itextpdf</artifactId>-->
+        <!--            <version>5.5.13.4</version>&lt;!&ndash; Jun 13, 2024 &ndash;&gt;-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.ironsoftware</groupId>-->
+        <!--            <artifactId>ironpdf</artifactId>-->
+        <!--            <version>2025.6.5</version>&lt;!&ndash; Jun 04, 2025 &ndash;&gt;-->
+        <!--        </dependency>-->
+
+        <!-- docx -->
+        <dependency>
+            <groupId>org.docx4j</groupId>
+            <artifactId>docx4j-core</artifactId>
+            <version>11.5.3</version><!-- May 07, 2025 -->
+        </dependency>
+
+
+        <!-- epub -->
+        <dependency>
+            <groupId>io.documentnode</groupId>
+            <artifactId>epub4j-core</artifactId>
+            <version>4.2.2</version><!-- Dec 05, 2024 -->
+        </dependency>
+
+
+        <!-- fb2 -->
+        <dependency>
+            <groupId>org.jdom</groupId>
+            <artifactId>jdom2</artifactId>
+            <version>2.0.6.1</version><!-- Dec 08, 2021 -->
+        </dependency>
+
+
+        <!-- djvu -->
+        <dependency>
+            <groupId>com.groupdocs</groupId>
+            <artifactId>groupdocs-viewer</artifactId>
+            <version>25.2</version> <!-- Mar 04, 2025 -->
+        </dependency>
+
+
+        <!-- csv -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-csv</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>5.11.2</version><!-- Jun 22, 2025 -->
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-csv</artifactId>
+            <version>1.14.0</version><!-- Mar 15, 2025 -->
+        </dependency>
+
+        <dependency>
+            <groupId>net.sf.supercsv</groupId>
+            <artifactId>super-csv</artifactId>
+            <version>2.4.0</version><!-- Oct 29, 2015 -->
+        </dependency>
+
+        <dependency>
+            <groupId>de.siegmar</groupId>
+            <artifactId>fastcsv</artifactId>
+            <version>4.0.0</version> <!--Jun 22, 2025-->
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.hazendaz</groupId>
+            <artifactId>csveed</artifactId>
+            <version>0.7.1</version> <!-- Oct 15, 2021 -->
+        </dependency>
+
+        <dependency>
+            <groupId>org.csveed</groupId>
+            <artifactId>csveed</artifactId>
+            <version>0.8.2</version> <!-- Aug 24, 2024 -->
+        </dependency>
+    </dependencies>
+    <repositories>
+        <!-- djvu -->
+        <repository>
+            <id>repository.groupdocs.com</id>
+            <name>GroupDocs Repository</name>
+            <url>https://repository.groupdocs.com/repo/</url>
+        </repository>
+    </repositories>
+</project>

@@ -1,0 +1,200 @@
+{
+  "store": {
+    "TypesAnnotated": {
+      "com.mastering.reflections.TestModel$AC3": [
+        "com.mastering.reflections.TestModel$C7"
+      ],
+      "com.mastering.reflections.TestModel$MAI1": [
+        "com.mastering.reflections.TestModel$AI1"
+      ],
+      "com.mastering.reflections.TestModel$AC2": [
+        "com.mastering.reflections.TestModel$C3",
+        "com.mastering.reflections.TestModel$C2",
+        "com.mastering.reflections.TestModel$AC3",
+        "com.mastering.reflections.TestModel$I3"
+      ],
+      "com.mastering.reflections.TestModel$AC1n": [
+        "com.mastering.reflections.TestModel$C1"
+      ],
+      "com.mastering.reflections.TestModel$AC1": [
+        "com.mastering.reflections.TestModel$C1"
+      ],
+      "com.mastering.reflections.TestModel$AI2": [
+        "com.mastering.reflections.TestModel$I2"
+      ],
+      "java.lang.annotation.Inherited": [
+        "com.mastering.reflections.TestModel$MAI1",
+        "com.mastering.reflections.TestModel$AC1",
+        "com.mastering.reflections.TestModel$AI2"
+      ],
+      "com.mastering.reflections.TestModel$AI1": [
+        "com.mastering.reflections.TestModel$I1"
+      ],
+      "java.lang.annotation.Retention": [
+        "com.mastering.reflections.TestModel$AC3",
+        "com.mastering.reflections.TestModel$MAI1",
+        "com.mastering.reflections.TestModel$AC1n",
+        "com.mastering.reflections.TestModel$AC2",
+        "com.mastering.reflections.TestModel$AC1",
+        "com.mastering.reflections.TestModel$AI2",
+        "com.mastering.reflections.TestModel$AI1",
+        "com.mastering.reflections.TestModel$AF1",
+        "com.mastering.reflections.TestModel$AM1"
+      ]
+    },
+    "MethodsSignature": {
+      "[com.mastering.reflections.TestModel$C2]": [
+        "com.mastering.reflections.TestModel$C4.c2toC3(com.mastering.reflections.TestModel$C2)"
+      ],
+      "[]": [
+        "com.mastering.reflections.TestModel$C7.\u003cinit\u003e()",
+        "com.mastering.reflections.TestModel$AF1.value()",
+        "com.mastering.reflections.TestModel$C4.m1()",
+        "com.mastering.reflections.TestModel$C4.\u003cinit\u003e()",
+        "com.mastering.reflections.TestModel$C2.\u003cinit\u003e()",
+        "com.mastering.reflections.TestModel$C4.m3()",
+        "com.mastering.reflections.TestModel$C3.\u003cinit\u003e()",
+        "com.mastering.reflections.TestModel$C6.\u003cinit\u003e()",
+        "com.mastering.reflections.TestModel$C5.\u003cinit\u003e()",
+        "com.mastering.reflections.TestModel$AM1.value()",
+        "com.mastering.reflections.TestModel$AC2.value()",
+        "com.mastering.reflections.TestModel$C1.\u003cinit\u003e()"
+      ],
+      "[int, java.lang.String[]]": [
+        "com.mastering.reflections.TestModel$C4.m1(int, java.lang.String[])"
+      ],
+      "[int, int]": [
+        "com.mastering.reflections.TestModel$C4.add(int, int)"
+      ],
+      "[java.lang.String]": [
+        "com.mastering.reflections.TestModel$C4.m4(java.lang.String)",
+        "com.mastering.reflections.TestModel$C4.\u003cinit\u003e(java.lang.String)"
+      ],
+      "[int[][], java.lang.String[][]]": [
+        "com.mastering.reflections.TestModel$C4.m1(int[][], java.lang.String[][])"
+      ]
+    },
+    "MethodsParameter": {
+      "com.mastering.reflections.TestModel$C2": [
+        "com.mastering.reflections.TestModel$C4.c2toC3(com.mastering.reflections.TestModel$C2)"
+      ],
+      "int[][]": [
+        "com.mastering.reflections.TestModel$C4.m1(int[][], java.lang.String[][])"
+      ],
+      "java.lang.String[][]": [
+        "com.mastering.reflections.TestModel$C4.m1(int[][], java.lang.String[][])"
+      ],
+      "java.lang.String": [
+        "com.mastering.reflections.TestModel$C4.m4(java.lang.String)",
+        "com.mastering.reflections.TestModel$C4.\u003cinit\u003e(java.lang.String)"
+      ],
+      "java.lang.String[]": [
+        "com.mastering.reflections.TestModel$C4.m1(int, java.lang.String[])"
+      ],
+      "com.mastering.reflections.TestModel$AM1": [
+        "com.mastering.reflections.TestModel$C4.m4(java.lang.String)",
+        "com.mastering.reflections.TestModel$C4.\u003cinit\u003e(java.lang.String)"
+      ],
+      "int": [
+        "com.mastering.reflections.TestModel$C4.m1(int, java.lang.String[])",
+        "com.mastering.reflections.TestModel$C4.add(int, int)"
+      ]
+    },
+    "SubTypes": {
+      "com.mastering.reflections.TestModel$C3": [
+        "com.mastering.reflections.TestModel$C5"
+      ],
+      "com.mastering.reflections.TestModel$C1": [
+        "com.mastering.reflections.TestModel$C3",
+        "com.mastering.reflections.TestModel$C2"
+      ],
+      "java.lang.annotation.Annotation": [
+        "com.mastering.reflections.TestModel$AC3",
+        "com.mastering.reflections.TestModel$MAI1",
+        "com.mastering.reflections.TestModel$AC2",
+        "com.mastering.reflections.TestModel$AC1n",
+        "com.mastering.reflections.TestModel$AC1",
+        "com.mastering.reflections.TestModel$AI2",
+        "com.mastering.reflections.TestModel$AI1",
+        "com.mastering.reflections.TestModel$AF1",
+        "com.mastering.reflections.TestModel$AM1"
+      ],
+      "com.mastering.reflections.TestModel$I1": [
+        "com.mastering.reflections.TestModel$I2"
+      ],
+      "com.mastering.reflections.TestModel$I3": [
+        "com.mastering.reflections.TestModel$C6"
+      ],
+      "java.lang.Object": [
+        "com.mastering.reflections.TestModel$AI2",
+        "com.mastering.reflections.TestModel$AI1",
+        "com.mastering.reflections.TestModel$AF1",
+        "com.mastering.reflections.TestModel$C7",
+        "com.mastering.reflections.TestModel$AM1",
+        "com.mastering.reflections.TestModel$C6",
+        "com.mastering.reflections.TestModel$AC3",
+        "com.mastering.reflections.TestModel$C4",
+        "com.mastering.reflections.TestModel$MAI1",
+        "com.mastering.reflections.TestModel$AC2",
+        "com.mastering.reflections.TestModel$C1",
+        "com.mastering.reflections.TestModel$AC1n",
+        "com.mastering.reflections.TestModel$AC1",
+        "com.mastering.reflections.TestModel$I1",
+        "com.mastering.reflections.TestModel$I3",
+        "com.mastering.reflections.TestModel$I2"
+      ],
+      "com.mastering.reflections.TestModel$I2": [
+        "com.mastering.reflections.TestModel$C1"
+      ]
+    },
+    "MethodsReturn": {
+      "com.mastering.reflections.TestModel$C3": [
+        "com.mastering.reflections.TestModel$C4.c2toC3(com.mastering.reflections.TestModel$C2)"
+      ],
+      "void": [
+        "com.mastering.reflections.TestModel$C4.m1(int, java.lang.String[])",
+        "com.mastering.reflections.TestModel$C4.m1()",
+        "com.mastering.reflections.TestModel$C4.m1(int[][], java.lang.String[][])"
+      ],
+      "java.lang.String": [
+        "com.mastering.reflections.TestModel$AF1.value()",
+        "com.mastering.reflections.TestModel$C4.m4(java.lang.String)",
+        "com.mastering.reflections.TestModel$C4.m3()",
+        "com.mastering.reflections.TestModel$AM1.value()",
+        "com.mastering.reflections.TestModel$AC2.value()"
+      ],
+      "int": [
+        "com.mastering.reflections.TestModel$C4.add(int, int)"
+      ]
+    },
+    "MethodsAnnotated": {
+      "com.mastering.reflections.TestModel$AM1": [
+        "com.mastering.reflections.TestModel$C4.m1(int, java.lang.String[])",
+        "com.mastering.reflections.TestModel$C4.m1()",
+        "com.mastering.reflections.TestModel$C4.m3()",
+        "com.mastering.reflections.TestModel$C4.m1(int[][], java.lang.String[][])",
+        "com.mastering.reflections.TestModel$C4.\u003cinit\u003e(java.lang.String)"
+      ]
+    },
+    "FieldsAnnotated": {
+      "com.mastering.reflections.TestModel$AF1": [
+        "com.mastering.reflections.TestModel$C4.f1",
+        "com.mastering.reflections.TestModel$C4.f2"
+      ]
+    },
+    "Resources": {
+      "resource1-reflections.xml": [
+        "META-INF/reflections/resource1-reflections.xml"
+      ],
+      "saved-testModel-reflections.xml": [
+        "META-INF/reflections/saved-testModel-reflections.xml"
+      ],
+      "resource2-reflections.xml": [
+        "META-INF/reflections/inner/resource2-reflections.xml"
+      ],
+      "testModel-reflections.xml": [
+        "META-INF/reflections/testModel-reflections.xml"
+      ]
+    }
+  }
+}
